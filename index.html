@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AegisNova AI — Care & Safety Intelligence</title>
+<style>
+:root{--bg:#f4f7fb;--panel:#fff;--ink:#14243b;--muted:#65758b;--line:#e1e8f0;--navy:#132a4a;--teal:#0f9d91;--red:#d94a55;--amber:#d9901a;--green:#27865d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,Segoe UI,Arial,sans-serif}
+.top{background:linear-gradient(120deg,#102544,#19466a);color:#fff;padding:26px clamp(18px,4vw,48px);display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}
+.brand{display:flex;gap:13px;align-items:center}.logo{width:48px;height:48px;border-radius:15px;background:#fff;color:#143454;display:grid;place-items:center;font-size:25px;font-weight:800}
+h1{font-size:26px;margin:0;letter-spacing:-.5px}.subtitle{color:#d4e4f4;margin-top:3px;font-size:13px}.status{padding:8px 12px;border-radius:999px;background:#ffffff18;border:1px solid #ffffff45;font-size:12px}
+main{max-width:1240px;margin:25px auto;padding:0 20px 45px}.notice{background:#fff8e8;border:1px solid #f0d9a5;color:#785414;border-radius:12px;padding:12px 15px;margin-bottom:20px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 3px 12px #1c355208}.metric{font-size:28px;font-weight:750;letter-spacing:-.6px}.label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}.small{font-size:12px;color:var(--muted)}.section{margin-top:22px}.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}.section h2{font-size:18px;margin:0}.actions{display:flex;gap:8px;flex-wrap:wrap}button,.btn{border:0;border-radius:9px;padding:10px 14px;font-weight:650;cursor:pointer;font-size:13px}.primary{background:var(--teal);color:#fff}.secondary{background:#eaf0f6;color:#1a3555}.dark{background:#183653;color:#fff}.formrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.formrow input,.formrow select{padding:10px 12px;border:1px solid var(--line);border-radius:9px;min-width:180px;flex:1;background:white;color:var(--ink)}.eventlist{display:grid;gap:10px}.event{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:13px;align-items:start;background:white;border:1px solid var(--line);padding:15px;border-radius:13px}.dot{width:10px;height:10px;border-radius:50%;margin-top:7px}.dot.NORMAL{background:var(--green)}.dot.ATTENTION{background:var(--amber)}.dot.URGENT{background:var(--red)}.eventtitle{font-weight:700}.pill{font-size:10px;font-weight:800;letter-spacing:.7px;border-radius:99px;padding:5px 8px;background:#edf2f7}.pill.NORMAL{color:var(--green);background:#e7f6ed}.pill.ATTENTION{color:#98600a;background:#fff2d8}.pill.URGENT{color:#b12c3a;background:#ffe9eb}.event p{margin:4px 0;color:var(--muted);font-size:13px}.empty{padding:25px;text-align:center;border:1px dashed #c7d2df;border-radius:13px;color:var(--muted)}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px}.result{margin-top:12px;background:#f6f9fc;border:1px solid var(--line);border-radius:11px;padding:12px;font-size:13px;min-height:55px}.footer{margin-top:25px;color:var(--muted);font-size:11px;text-align:center}.error{color:#b12c3a}.success{color:var(--green)}@media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.twocol{grid-template-columns:1fr}}@media(max-width:480px){.grid{grid-template-columns:1fr 1fr}.metric{font-size:24px}.event{grid-template-columns:10px minmax(0,1fr)}.event .pill{grid-column:2;justify-self:start}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><div class="logo">G</div><div><h1>AegisNova AI</h1><div class="subtitle">AI-powered caregiver event awareness • Nebius + NVIDIA Nemotron</div></div></div>
+  <div id="modeStatus" class="status">Checking configuration…</div>
+</header>
+<main>
+  <div class="notice"><b>Safety note:</b> AegisNova AI is an experimental event-awareness prototype, not a medical device or emergency service. It cannot confirm falls or diagnose a person's condition. Always verify alerts yourself.</div>
+  <div class="grid">
+    <div class="card"><div class="label">Events shown</div><div id="totalCount" class="metric">0</div><div class="small">In current view</div></div>
+    <div class="card"><div class="label">Normal</div><div id="normalCount" class="metric">0</div><div class="small">No obvious high-priority signal</div></div>
+    <div class="card"><div class="label">Attention</div><div id="attentionCount" class="metric">0</div><div class="small">Review if expected</div></div>
+    <div class="card"><div class="label">Urgent</div><div id="urgentCount" class="metric">0</div><div class="small">Check promptly</div></div>
+  </div>
+
+  <section class="section card">
+    <div class="sectionhead"><h2>Load Events</h2><span class="small">Demo events are simulated; live Ring is optional</span></div>
+    <p class="small">To use live Ring data, create a short-lived token in the Ring Developer Playground and add it to the local <code>.env</code> file as <code>RING_ACCESS_TOKEN</code>. Restart the app, then load devices. Never share your token in a video or public repository.</p>
+    <div class="actions"><button class="primary" onclick="loadDevices()">Load Ring Devices</button><button class="secondary" onclick="loadDemo()">Use Demo Events</button></div>
+    <div class="formrow"><select id="deviceSelect" aria-label="Ring device"><option value="">Choose a Ring device after loading devices</option></select><button class="dark" onclick="loadRingEvents()">Load Device Event History</button></div>
+    <div id="ringResult" class="result">Ready. Demo mode works without Ring credentials.</div>
+  </section>
+
+  <section class="section">
+    <div class="sectionhead"><h2>Activity Timeline</h2><div class="actions"><button class="secondary" onclick="clearEvents()">Clear View</button></div></div>
+    <div id="events" class="eventlist"><div class="empty">No events loaded yet. Choose “Use Demo Events” to try the interface.</div></div>
+  </section>
+
+  <section class="section twocol">
+    <div class="card">
+      <h2>AI Safety Event Analyzer</h2><p class="small">Submit event metadata to receive an AI summary, explanation, and suggested next step. Use demo data if no real event source is connected.</p>
+      <div class="formrow"><select id="testType"><option value="motion_detected">Motion detected</option><option value="package_delivery">Package delivery</option><option value="doorbell_press">Doorbell press</option><option value="device_status">Routine device status</option><option value="explicit_forced_entry">Explicit forced-entry indicator (test only)</option></select></div>
+      <div class="formrow"><input id="testDescription" placeholder="Optional context, e.g. repeated entrance activity"></div>
+      <div class="formrow"><button class="primary" onclick="analyzeTest()">Analyze Test Event</button></div>
+      <div id="analysisResult" class="result">Test result will appear here.</div>
+    </div>
+    <div class="card">
+      <h2>How AegisNova AI works</h2>
+      <p class="small"><b>1. Event input:</b> Ring API event history or clearly labelled demo data.</p>
+      <p class="small"><b>2. AI triage:</b> NVIDIA Nemotron through Nebius Token Factory when configured; transparent local fallback otherwise.</p>
+      <p class="small"><b>3. Explanation:</b> summary, priority reason, and suggested next step for human review.</p>
+      <p class="small"><b>4. Human decision:</b> a caregiver verifies the situation and chooses what to do.</p>
+      <div id="aiStatus" class="result">Checking AI configuration…</div>
+    </div>
+  </section>
+  <div class="footer">AegisNova AI prototype • Demo events are simulated and are not real household incidents.</div>
+</main>
+<script>
+let allEvents = [];
+function esc(s){return String(s ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function getAnalysis(e){return e.guardian_analysis || e.analysis || {level:"ATTENTION",summary:"Review this event.",reason:"No analysis provided."};}
+function render(){
+  const counts={NORMAL:0,ATTENTION:0,URGENT:0};
+  allEvents.forEach(e=>{const a=getAnalysis(e); counts[a.level] = (counts[a.level]||0)+1;});
+  document.getElementById("totalCount").textContent=allEvents.length;
+  document.getElementById("normalCount").textContent=counts.NORMAL;
+  document.getElementById("attentionCount").textContent=counts.ATTENTION;
+  document.getElementById("urgentCount").textContent=counts.URGENT;
+  const host=document.getElementById("events");
+  if(!allEvents.length){host.innerHTML='<div class="empty">No events in this view.</div>';return;}
+  host.innerHTML=allEvents.map((e,i)=>{
+    const a=getAnalysis(e); const title=e.description||e.event_type||e.type||e.name||"Ring event";
+    const date=e.timestamp||e.created_at||e.time||"Time not provided";
+    const source=e.device_name||e.device_id||e.source||(e.demo?"Demo source":"Ring event");
+    return `<article class="event"><div class="dot ${esc(a.level)}"></div><div><div class="eventtitle">${esc(title)}</div><p>${esc(source)} · ${esc(date)}</p><p><b>${esc(a.summary)}</b></p><p>${esc(a.reason||"")}</p><p class="small">Analysis: ${esc(a.method||"event triage")}${e.demo?" · SIMULATED DEMO":""}</p></div><span class="pill ${esc(a.level)}">${esc(a.level)}</span></article>`;
+  }).join("");
+}
+async function api(url,opts={}){const r=await fetch(url,opts);const d=await r.json();if(!r.ok||d.ok===false)throw new Error(d.error||"Request failed");return d;}
+async function init(){
+ try{const s=await api("/api/status");document.getElementById("modeStatus").textContent=s.nebius_configured?"Nebius + NVIDIA Nemotron connected":(s.ring_configured?"Ring API configured":"Demo mode • configure Nebius API key");document.getElementById("aiStatus").textContent=s.nebius_configured?"Nebius Token Factory is configured. Model: "+s.nebius_model:(s.bedrock_configured?"Amazon Bedrock is configured; Nebius is not configured.":"Nebius API key not set. The app is using transparent rule-based fallback until you configure it."); }
+ catch(e){document.getElementById("modeStatus").textContent="Backend not reachable";document.getElementById("ringResult").innerHTML='<span class="error">Start the app using RUN_AEGISNOVA AI.bat.</span>';}
+}
+async function loadDemo(){try{const d=await api("/api/demo-events");allEvents=d.events;render();document.getElementById("ringResult").textContent="Loaded simulated demo events. These are not live Ring events.";}catch(e){document.getElementById("ringResult").textContent=e.message;}}
+async function loadDevices(){try{const d=await api("/api/devices");let list=Array.isArray(d.data)?d.data:(d.data.devices||d.data.data||[]);const sel=document.getElementById("deviceSelect");sel.innerHTML='<option value="">Choose a Ring device</option>';list.forEach(x=>{const id=x.id||x.device_id||x.deviceId;const name=x.name||x.device_name||id;if(id){const o=document.createElement("option");o.value=id;o.textContent=name+" ("+id+")";sel.appendChild(o);}});document.getElementById("ringResult").textContent=list.length?`Found ${list.length} Ring device(s). Choose one and load event history.`:"Ring API responded, but no devices were returned."; }catch(e){document.getElementById("ringResult").innerHTML='<span class="error">'+esc(e.message)+'</span>';}}
+async function loadRingEvents(){const id=document.getElementById("deviceSelect").value;if(!id){document.getElementById("ringResult").textContent="Load devices and choose one first.";return;}try{const d=await api("/api/events?device_id="+encodeURIComponent(id));allEvents=d.events;render();document.getElementById("ringResult").textContent=`Loaded ${d.count} event(s) from Ring event history.`;}catch(e){document.getElementById("ringResult").innerHTML='<span class="error">'+esc(e.message)+'</span>';}}
+async function analyzeTest(){const type=document.getElementById("testType").value;const description=document.getElementById("testDescription").value;try{const d=await api("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({event_type:type,description,timestamp:new Date().toISOString()})});const a=d.analysis;document.getElementById("analysisResult").innerHTML=`<span class="pill ${esc(a.level)}">${esc(a.level)}</span><p><b>${esc(a.summary)}</b></p><p><b>Why:</b> ${esc(a.reason)}</p><p><b>Suggested next step:</b> ${esc(a.suggested_action||"Review the event details and verify the context.")}</p><p class="small">Method: ${esc(a.method)}${a.model?" · Model: "+esc(a.model):""}${a.ai_note?" · "+esc(a.ai_note):""}</p>`;}catch(e){document.getElementById("analysisResult").textContent=e.message;}}
+function clearEvents(){allEvents=[];render();}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+AEGISNOVA AI — NEBIUS × NVIDIA HACKATHON EDITION
+
+1) Python 3.10+ install hona chahiye.
+2) ZIP extract karo.
+3) RUN_AEGISNOVA AI.bat par double-click karo.
+4) Pehli baar app .env.example se .env banayega. App band hone ke baad .env Notepad mein kholo.
+5) NEBIUS_API_KEY= ke baad apni private Nebius Token Factory API key paste karo. Quotes lagane ki zaroorat nahi. File ko GitHub par upload MAT karna.
+6) App ko dobara RUN_AEGISNOVA AI.bat se start karo.
+7) Browser mein Use Demo Events aur Analyze Test Event try karo.
+8) AI response ke Method mein "Nebius Token Factory + NVIDIA Nemotron" aana chahiye. Agar "transparent rule-based fallback" aaye, to live AI call kaam nahi kar raha—API key, model access aur internet check karo.
+9) Devpost par submit karne se pehle public demo deploy karo, live model test karo, aur 3 minute se chhota YouTube demo record karo.
+10) Ye ZIP code package hai; ye apne aap Devpost par upload/deploy nahi hota.
+
+SECURITY: .env, API keys, Ring tokens, AWS credentials ya personal footage ko GitHub par mat daalna. Agar koi key pehle public ho chuki hai to use revoke/rotate karo.
+
+SAFETY: Ye experimental prototype hai, medical device ya emergency service nahi. Demo events simulated hain.
